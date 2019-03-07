@@ -54,6 +54,29 @@ def create_image(r,g,b):
     cv.imshow("iamge", img)
     cv.waitKey(0)
  
+def create_seq(colorDic):
+	img = np.zeros((512,512,3), np.uint8);
+	i0 = 0;
+	i1 = 0;
+	size = 32;
+	for i in range(len(colorDic)):
+		if(i1 >= 512//size):
+			print(i0,i1)
+			i0 += 1;
+			i1 = 0;
+		curR = colorDic[i][0][0];
+		curG = colorDic[i][0][1];
+		curB = colorDic[i][0][2];
+		img[i0*size:(i0+1)*size,i1*size:(i1+1)*size,0] = curR;
+		img[i0*size:(i0+1)*size,i1*size:(i1+1)*size,1] = curG;
+		img[i0*size:(i0+1)*size,i1*size:(i1+1)*size,2] = curB;
+		i1 += 1;
+		
+		cv.imshow("image", img)
+		cv.waitKey(0)
+	cv.imshow("image", img)
+	cv.waitKey(0)
+
 def get_dominant_color(image):
     max_score = 0.0001
     dominant_color = None
@@ -73,15 +96,19 @@ def get_dominant_color(image):
             max_score = score
             dominant_color = (r,g,b)
     colorDic = sorted(colorDic.items(), key=lambda item:item[1], reverse=True);
-    for i in range(3):
-    	cur = colorDic[i];
-    	cur = cur[0];
-    	create_image(cur[0],cur[1],cur[2])
+    create_seq(colorDic);
+    # for i in range(3):
+    # 	cur = colorDic[i];
+    # 	cur = cur[0];
+    # 	create_image(cur[0],cur[1],cur[2])
     return dominant_color
  
  
 if __name__ == '__main__':
     image = Image.open('taxi/5.png')
+    img = cv.imread('taxi/5.png')
+    cv.imshow("1",img);
+    cv.waitKey(0)
     image = image.convert('RGB')
     
     print(get_dominant_color(image))
