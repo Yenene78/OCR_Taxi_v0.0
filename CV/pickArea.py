@@ -3,7 +3,6 @@ import colorsys;
 import numpy as np;
 import roi_merge as roi_;
 import PIL.Image as Image;
-import saveImage as si;
 
 class Picker:
 	def __init__(self):
@@ -23,7 +22,6 @@ class Picker:
 			# ocr(img[h1:h2,w1:w2]);
 			# showImage(img[h1:h2,w1:w2],"block")
 		self.showImage(img_, "Result");
-		si.SaveImage(img_)
 	# [Cited] Provide several color masks;
 	def color_(self, img, flag):
 		HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -41,9 +39,10 @@ class Picker:
 	def colorFilter(self, img, img_):
 		# 转PIL_image,获取颜色统计;
 		PILImg = Image.fromarray(cv2.cvtColor(img.copy(),cv2.COLOR_BGR2RGB));
-		count= PILImg.getcolors(PILImg.size[0]*PILImg.size[1]);
-		count = sorted(count, reverse = True); # (count, (r,g,b));
-		self.create_seq(count);
+		_, colorDic = self.get_dominant_color(PILImg);
+		# a = input();
+		# count = sorted(count, reverse = True); # (count, (r,g,b));
+		# self.create_seq(count);
 
 		# 去除红色，带补全;
 		HSV = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2HSV);
@@ -109,14 +108,14 @@ class Picker:
 	        if y > 0.9:
 	            continue
 	        score = (saturation+0.1)*count
-	        colorDic[(r,g,b)] = score;
+	        # colorDic[(r,g,b)] = score;
+	        colorDic[score] = (r,g,b);
 	        if score > max_score:
 	            max_score = score
 	            dominant_color = (r,g,b)
 	    colorDic = sorted(colorDic.items(), key=lambda item:item[1], reverse=True);
 	    self.create_seq(colorDic);
-	    # self.create_image(120,22,120)
-	    return dominant_color
+	    return dominant_color, colorDic;
 	# 画框
 	def find_region(self, img):
 		#图像的宽带和高度
@@ -142,18 +141,7 @@ class Picker:
 		roi_solve.rm_inside() 
 		roi_solve.rm_overlop()
 		region = roi_solve.merge_roi();
-		lt = []
-		region_ = []
-		for rect in region:
-			if(rect[3]>10):
-				lt.append(rect[3])
-		mostHeight = max(lt, key=lt.count)
-		rangeHeight = 5
-		for rect in region:
-			if abs( rect[3] - mostHeight ) < rangeHeight :
-				region_.append(rect)
-		return region_;
-		
+		return region;
 	# 自适应threshold && 反色；
 	def threshold(self, img):
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
