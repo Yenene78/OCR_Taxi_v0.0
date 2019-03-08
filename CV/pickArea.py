@@ -15,15 +15,16 @@ class Picker:
 		# img = self.bi_demo(img, 100, 15);
 		img = self.colorFilter(img, img_);
 		img = self.threshold(img);
+		img1 = img_.copy();
 		region = self.roi_solve(img);
 		for i in range(len(region)):
 			rect2 = region[i]
 			w1,w2 = rect2[0],rect2[0]+rect2[2]
 			h1,h2 = rect2[1],rect2[1]+rect2[3]
 			box = [[w1,h2],[w1,h1],[w2,h1],[w2,h2]]
-			cv2.drawContours(img_, np.array([box]), 0, (0, 0, 255), 1)
+			cv2.drawContours(img1, np.array([box]), 0, (0, 0, 255), 1)
 			self.saveImage(img_, box, i)
-		self.showImage(img_, "Result");
+		self.showImage(img1, "Result");
 	# 双边滤波
 	def bi_demo(self, image, p1, p2):   
 	    dst = cv2.bilateralFilter(image, 0, p1, p2) # 100, 15
@@ -202,7 +203,7 @@ class Picker:
 		path = os.path.abspath(os.path.dirname(current_path) + os.path.sep + ".") + "\\result"
 		if not os.path.exists(path):
 			os.makedirs(path)
-		savepath = path + "\\result" + str(datetime.datetime.now().strftime("%Y%m%d%H%M%S")) + "-" +str(index)+ ".png"
+		savepath = path + "\\" + str(datetime.datetime.now().strftime("%Y%m%d%H%M%S")) + "-" +str(index)+ ".png"
 		#print(savepath)
 		Xs = [i[0] for i in box]
 		Ys = [i[1] for i in box]
