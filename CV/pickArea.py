@@ -3,6 +3,7 @@ import colorsys;
 import numpy as np;
 import roi_merge as roi_;
 import PIL.Image as Image;
+import datetime
 
 class Picker:
 	def __init__(self):
@@ -19,8 +20,6 @@ class Picker:
 			h1,h2 = rect2[1],rect2[1]+rect2[3]
 			box = [[w1,h2],[w1,h1],[w2,h1],[w2,h2]]
 			cv2.drawContours(img_, np.array([box]), 0, (0, 0, 255), 1)
-			# ocr(img[h1:h2,w1:w2]);
-			# showImage(img[h1:h2,w1:w2],"block")
 		self.showImage(img_, "Result");
 	# [Cited] Provide several color masks;
 	def color_(self, img, flag):
@@ -41,8 +40,6 @@ class Picker:
 		PILImg = Image.fromarray(cv2.cvtColor(img.copy(),cv2.COLOR_BGR2RGB));
 		_, colorDic = self.get_dominant_color(PILImg);
 		# a = input();
-		# count = sorted(count, reverse = True); # (count, (r,g,b));
-		# self.create_seq(count);
 
 		# 去除红色，带补全;
 		HSV = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2HSV);
@@ -141,17 +138,7 @@ class Picker:
 		roi_solve.rm_inside() 
 		roi_solve.rm_overlop()
 		region = roi_solve.merge_roi();
-		lt = []
-		region_ = []
-		for rect in region:
-			if(rect[3]>10):
-				lt.append(rect[3])
-		mostHeight = max(lt, key=lt.count)
-		rangeHeight = 5
-		for rect in region:
-			if abs( rect[3] - mostHeight ) < rangeHeight :
-				region_.append(rect)
-		return region_;
+		return region;
 	# 自适应threshold && 反色；
 	def threshold(self, img):
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -168,6 +155,9 @@ class Picker:
 	def showImage(self, img, info):
 		cv2.imshow(info, img);
 		cv2.waitKey(0);
+	# Output;
+	def saveImage(self, img, path):
+		cv2.imwrite(savepath, img);
 	# #均值迁移
 	def shift_demo(self, img):
 	    dst = cv2.pyrMeanShiftFiltering(img, 10, 50)
