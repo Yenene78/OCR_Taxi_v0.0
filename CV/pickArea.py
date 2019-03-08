@@ -59,11 +59,42 @@ class Picker:
 		img -= img_R;
 		self.showImage(img, "red")
 
+		# LowerRed = np.array([0,43,46]);
+		# UpperRed = np.array([10,255,255]);
+		# mask_R = cv2.inRange(HSV, LowerRed, UpperRed);
+
+		# img_R = cv2.bitwise_and(img, img, mask=mask_R);
+		# img_R = cv2.bitwise_not(img_R);
+		# img -= img_R;
+
+		# LowerRed = np.array([156,43,46]);
+		# UpperRed = np.array([180,255,255]);
+		# mask_R = cv2.inRange(HSV, LowerRed, UpperRed);
+
+		# img_R = cv2.bitwise_and(img, img, mask=mask_R);
+		# img_R = cv2.bitwise_not(img_R);
+		# img -= img_R;
+
+		# LowerGreen = np.array([35,43,46]);
+		# UpperGreen = np.array([77,255,255]);
+		# mask_G = cv2.inRange(HSV, LowerGreen, UpperGreen);
+
+		# img_G = cv2.bitwise_and(img, img, mask=mask_G);
+		# img_G = cv2.bitwise_not(img_G);
+		# img -= img_G;
+
 		# 取蓝色;
 		HSV = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2HSV);
 		H, S, V = cv2.split(HSV);
-		LowerBlue = np.array([80,43,46]);
-		UpperBlue = np.array([160,255,255]);
+
+		for item in colorDic:
+			color = item[1]
+			Hue = colorsys.rgb_to_hsv(color[0]/255.0, color[1]/255.0, color[2]/255.0)[0]*180
+			if (abs(Hue -112) < 12):
+				break;
+		rangeColor = 12
+		LowerBlue = np.array([Hue - rangeColor,43,46]);
+		UpperBlue = np.array([Hue + rangeColor,255,255]);
 		mask_B = cv2.inRange(HSV, LowerBlue, UpperBlue);
 		img_B = cv2.bitwise_and(img, img, mask=mask_B);
 		self.showImage(img_B, "with blue")
