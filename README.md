@@ -6,8 +6,8 @@ An alpha version of OCR for taxi receipt.
 2. 【Edit】基于颜色分布修正colorRange再滤波（colorFilter函数）
 3. ~~【Create】增加一个“打框后”Validate的函数~~<br>
 3.1【Create】增加基于颜色分布的Validation功能
-4. 【Create】增加一个“打框后”输出成图片保存的函数
-5. 【Create】增加一个类似Orwell的高糊但保留主要色的滤镜
+4. ~~【Create】增加一个“打框后”输出成图片保存的函数~~
+5. ~~【Create】增加一个类似Orwell的高糊但保留主要色的滤镜~~
 
 # 3/7/2019
 完善cv部分，主要代码都在pickArea.py中
