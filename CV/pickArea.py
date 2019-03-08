@@ -141,7 +141,17 @@ class Picker:
 		roi_solve.rm_inside() 
 		roi_solve.rm_overlop()
 		region = roi_solve.merge_roi();
-		return region;
+		lt = []
+		region_ = []
+		for rect in region:
+			if(rect[3]>10):
+				lt.append(rect[3])
+		mostHeight = max(lt, key=lt.count)
+		rangeHeight = 5
+		for rect in region:
+			if abs( rect[3] - mostHeight ) < rangeHeight :
+				region_.append(rect)
+		return region_;
 	# 自适应threshold && 反色；
 	def threshold(self, img):
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
