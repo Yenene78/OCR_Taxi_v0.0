@@ -10,7 +10,7 @@ class Picker:
 		print("****** Start CV Part ******");
 		img = self.readImage(str(input("Please Input the ImgPath: ")));
 		img_ = img.copy(); # back-up;
-		img = self.shift_demo(img);
+		img = self.shift_demo(img, 10, 50);
 		img = self.colorFilter(img, img_);
 		img = self.threshold(img);
 		region = self.roi_solve(img);
@@ -21,6 +21,11 @@ class Picker:
 			box = [[w1,h2],[w1,h1],[w2,h1],[w2,h2]]
 			cv2.drawContours(img_, np.array([box]), 0, (0, 0, 255), 1)
 		self.showImage(img_, "Result");
+	# 双边滤波
+	def bi_demo(self, image, p1, p2):   
+	    dst = cv2.bilateralFilter(image, 0, p1, p2) # 100, 15
+	    cv2.imshow("bi_demo", dst)
+	    return dst;
 	# [Cited] Provide several color masks;
 	def color_(self, img, flag):
 		HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -37,9 +42,10 @@ class Picker:
 	# Filters;
 	def colorFilter(self, img, img_):
 		# 转PIL_image,获取颜色统计;
-		PILImg = Image.fromarray(cv2.cvtColor(img.copy(),cv2.COLOR_BGR2RGB));
+		tmp = img.copy();
+		tmp = self.shift_demo(tmp, 20, 100);
+		PILImg = Image.fromarray(cv2.cvtColor(tmp,cv2.COLOR_BGR2RGB));
 		_, colorDic = self.get_dominant_color(PILImg);
-		# a = input();
 
 		# 去除红色，带补全;
 		HSV = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2HSV);
@@ -110,7 +116,7 @@ class Picker:
 	        if score > max_score:
 	            max_score = score
 	            dominant_color = (r,g,b)
-	    colorDic = sorted(colorDic.items(), key=lambda item:item[1], reverse=True);
+	    colorDic = sorted(colorDic.items(), key=lambda item:item[0], reverse=True);
 	    self.create_seq(colorDic);
 	    return dominant_color, colorDic;
 	# 画框
@@ -159,8 +165,8 @@ class Picker:
 	def saveImage(self, img, path):
 		cv2.imwrite(savepath, img);
 	# #均值迁移
-	def shift_demo(self, img):
-	    dst = cv2.pyrMeanShiftFiltering(img, 10, 50)
+	def shift_demo(self, img, p1, p2):
+	    dst = cv2.pyrMeanShiftFiltering(img, p1, p2) # 10, 50
 	    cv2.imshow("shift_demo", dst)
 	    return dst;
 
