@@ -3,6 +3,7 @@ import colorsys;
 import numpy as np;
 import roi_merge as roi_;
 import PIL.Image as Image;
+import saveImage as si;
 
 class Picker:
 	def __init__(self):
@@ -22,6 +23,7 @@ class Picker:
 			# ocr(img[h1:h2,w1:w2]);
 			# showImage(img[h1:h2,w1:w2],"block")
 		self.showImage(img_, "Result");
+		si.SaveImage(img_)
 	# [Cited] Provide several color masks;
 	def color_(self, img, flag):
 		HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
