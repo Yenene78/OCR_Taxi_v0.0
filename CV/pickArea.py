@@ -2,6 +2,7 @@ import cv2;
 import colorsys;
 import numpy as np;
 import roi_merge as roi_;
+import PIL.Image as Image;
 
 class Picker:
 	def __init__(self):
@@ -34,40 +35,27 @@ class Picker:
 		if flag == 2:
 			mask_ = cv2.inRange(HSV.copy(),LowerBlue[0],UpperBlue[0])
 		return mask_
-	# Show Current Color;
-	def create_image(self, r, g, b):
-	    img = np.zeros((512,512,3), np.uint8) 
-	    img[:,:,0]=r
-	    img[:,:,1]=g
-	    img[:,:,2]=b
-	    cv.imshow("image", img)
-	    cv.waitKey(0)
 	# Filters;
 	def colorFilter(self, img, img_):
+		# 转PIL_image,获取颜色统计;
+		PILImg = Image.fromarray(cv2.cvtColor(img.copy(),cv2.COLOR_BGR2RGB));
+		count= PILImg.getcolors(PILImg.size[0]*PILImg.size[1]);
+		count = sorted(count, reverse = True); # (count, (r,g,b));
+		self.create_seq(count);
+
 		# 去除红色，带补全;
-		R, G, B = cv2.split(img);
-
-		for i in range(len(R)):
-			saturation = colorsys.rgb_to_hsv(R[i]/255.0, G[i]/255.0, B[i]/255.0)[1]
-			y = min(abs(R[i]*2104+G[i]*4130+B[i]*802+4096+131072)>>13,235)
-			y = (y-16.0)/(235-16)
-
-
 		HSV = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2HSV);
 		H, S, V = cv2.split(HSV);
-
 		H = np.array(H).flatten()
 		S = np.array(S).flatten()
 		V = np.array(V).flatten()
-		
 		mask_R = self.color_(img_.copy(), 1);
 		img_R = cv2.bitwise_and(img, img, mask=mask_R);
 		img_R = cv2.bitwise_not(img_R);
 		img -= img_R;
 		self.showImage(img, "red")
-		# 取蓝色;
 
-		
+		# 取蓝色;
 		HSV = cv2.cvtColor(img.copy(), cv2.COLOR_BGR2HSV);
 		H, S, V = cv2.split(HSV);
 		LowerBlue = np.array([80,43,46]);
@@ -77,6 +65,56 @@ class Picker:
 		self.showImage(img_B, "with blue")
 		img = img_B;
 		return img;
+	# create Single img with given RGB;
+	def create_image(self, r, g, b):
+	    img = np.zeros((512,512,3), np.uint8) 
+	    img[:,:,0]=r
+	    img[:,:,1]=g
+	    img[:,:,2]=b
+	    cv2.imshow("iamge", img)
+	    cv2.waitKey(0)
+ 	# create Multiple img with given colorDic(RGB);
+	def create_seq(self, colorDic):
+		img = np.zeros((512,512,3), np.uint8);
+		i0 = 0;
+		i1 = 0;
+		size = 32; # dicide size of each Block;
+		for i in range(len(colorDic)):
+			if(i1 >= 512//size):
+				i0 += 1;
+				i1 = 0;
+			curR = colorDic[i][1][0];
+			curG = colorDic[i][1][1];
+			curB = colorDic[i][1][2];
+			img[i0*size:(i0+1)*size,i1*size:(i1+1)*size,0] = curR;
+			img[i0*size:(i0+1)*size,i1*size:(i1+1)*size,1] = curG;
+			img[i0*size:(i0+1)*size,i1*size:(i1+1)*size,2] = curB;
+			i1 += 1;
+		cv2.imshow("Sort Result", img)
+		cv2.waitKey(0)
+	# 颜色统计
+	def get_dominant_color(self, image):
+	    max_score = 0.0001
+	    dominant_color = None
+	    colorDic = {};
+	    for count,(r,g,b) in image.getcolors(image.size[0]*image.size[1]):
+	        # 转为HSV标准
+	        saturation = colorsys.rgb_to_hsv(r/255.0, g/255.0, b/255.0)[1]
+	        y = min(abs(r*2104+g*4130+b*802+4096+131072)>>13,235)
+	        y = (y-16.0)/(235-16)
+	 
+	        #忽略高亮色
+	        if y > 0.9:
+	            continue
+	        score = (saturation+0.1)*count
+	        colorDic[(r,g,b)] = score;
+	        if score > max_score:
+	            max_score = score
+	            dominant_color = (r,g,b)
+	    colorDic = sorted(colorDic.items(), key=lambda item:item[1], reverse=True);
+	    self.create_seq(colorDic);
+	    # self.create_image(120,22,120)
+	    return dominant_color
 	# 画框
 	def find_region(self, img):
 		#图像的宽带和高度
