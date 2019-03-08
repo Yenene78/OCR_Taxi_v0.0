@@ -3,7 +3,8 @@ import colorsys;
 import numpy as np;
 import roi_merge as roi_;
 import PIL.Image as Image;
-import datetime
+import datetime;
+import os;
 
 class Picker:
 	def __init__(self):
@@ -11,6 +12,7 @@ class Picker:
 		img = self.readImage(str(input("Please Input the ImgPath: ")));
 		img_ = img.copy(); # back-up;
 		img = self.shift_demo(img, 10, 50);
+		# img = self.bi_demo(img, 100, 15);
 		img = self.colorFilter(img, img_);
 		img = self.threshold(img);
 		region = self.roi_solve(img);
@@ -20,6 +22,7 @@ class Picker:
 			h1,h2 = rect2[1],rect2[1]+rect2[3]
 			box = [[w1,h2],[w1,h1],[w2,h1],[w2,h2]]
 			cv2.drawContours(img_, np.array([box]), 0, (0, 0, 255), 1)
+			self.saveImage(img_, box, i)
 		self.showImage(img_, "Result");
 	# 双边滤波
 	def bi_demo(self, image, p1, p2):   
@@ -43,7 +46,7 @@ class Picker:
 	def colorFilter(self, img, img_):
 		# 转PIL_image,获取颜色统计;
 		tmp = img.copy();
-		tmp = self.shift_demo(tmp, 20, 100);
+		# tmp = self.shift_demo(tmp, 10, 100);
 		PILImg = Image.fromarray(cv2.cvtColor(tmp,cv2.COLOR_BGR2RGB));
 		_, colorDic = self.get_dominant_color(PILImg);
 
@@ -106,7 +109,7 @@ class Picker:
 	    img[:,:,0]=r
 	    img[:,:,1]=g
 	    img[:,:,2]=b
-	    cv2.imshow("iamge", img)
+	    cv2.imshow("image", img)
 	    cv2.waitKey(0)
  	# create Multiple img with given colorDic(RGB);
 	def create_seq(self, colorDic):
@@ -193,8 +196,24 @@ class Picker:
 		cv2.imshow(info, img);
 		cv2.waitKey(0);
 	# Output;
-	def saveImage(self, img, path):
-		cv2.imwrite(savepath, img);
+	def saveImage(self, img_, box, index):
+		current_path = os.path.abspath(__file__)
+		# 获取当前文件的父目录
+		path = os.path.abspath(os.path.dirname(current_path) + os.path.sep + ".") + "\\result"
+		if not os.path.exists(path):
+			os.makedirs(path)
+		savepath = path + "\\result" + str(datetime.datetime.now().strftime("%Y%m%d%H%M%S")) + "-" +str(index)+ ".png"
+		#print(savepath)
+		Xs = [i[0] for i in box]
+		Ys = [i[1] for i in box]
+		x1 = min(Xs)
+		x2 = max(Xs)
+		y1 = min(Ys)
+		y2 = max(Ys)
+		hight = y2 - y1
+		width = x2 - x1
+		crop_img= img_[y1:y1+hight, x1:x1+width]
+		cv2.imwrite(savepath, crop_img);
 	# #均值迁移
 	def shift_demo(self, img, p1, p2):
 	    dst = cv2.pyrMeanShiftFiltering(img, p1, p2) # 10, 50
