@@ -2,7 +2,7 @@
 An alpha version of OCR for taxi receipt.
 
 # 3/11/2019
-1.【Create】代码拆出来;<br>
+1.~~【Create】代码拆出来;~~<br>
 2.~~【Create】实验一下直接API和pytesseract的识别效果;~~<br>
 2.1 【Create】做一个模型;<br>
 3.**【Optimal】颜色滤波做做好；**<br>
