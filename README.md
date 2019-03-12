@@ -16,7 +16,7 @@ An alpha version of OCR for taxi receipt.
 5. ~~【Create】增加一个类似Orwell的高糊但保留主要色的滤镜~~
 
 # 3/7/2019
-~~完善cv部分，主要代码都在pickArea.py中
+~~完善cv部分，主要代码都在pickArea.py中~~
 
 
 
