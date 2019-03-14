@@ -1,6 +1,10 @@
 # OCR_Taxi_v0.0
 An alpha version of OCR for taxi receipt.
 
+# 3/14/2019
+1. 【Change】修改取色模块
+2. ~~【Change】修改参数~~ (๑•̀ㅂ•́)و✧
+
 # 3/11/2019
 1.~~【Create】代码拆出来;~~<br>
 2.~~【Create】实验一下直接API和pytesseract的识别效果;~~<br>
