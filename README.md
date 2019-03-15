@@ -1,6 +1,9 @@
 # OCR_Taxi_v0.0
 An alpha version of OCR for taxi receipt.
 
+# 3/15/2019
+1. 粗暴学习一下skilearn;
+
 # 3/14/2019
 1. 【Change】修改取色模块
 2. ~~【Change】修改参数~~ (๑•̀ㅂ•́)و✧
