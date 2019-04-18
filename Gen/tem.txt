@@ -1,8 +1,10 @@
-Plant:#
-Vendor:apple banana
+Plant:Huawei
+Vendor:apple banana peach
 Order num.:#
 Contract num.:#
-Purchase unit:anywhere test
-No.:#
+Purchase unit:anywhere test home
+Num:#
 Matiral Num:#
-Matrial Description:LOL test nani?
+Matrial Description:LOL test nani fock lalala
+Company Code:#
+Unit Price:#

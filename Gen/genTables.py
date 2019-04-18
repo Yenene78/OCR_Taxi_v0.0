@@ -83,7 +83,7 @@ class genTables:
 		style = xlwt.XFStyle();
 		# set Borders:
 		borders = xlwt.Borders();
-		borders.left = 1;
+		borders.left = xlwt.Borders.THIN;
 		borders.right = 1;
 		borders.top = 1;
 		borders.bottom = 1;
@@ -133,7 +133,7 @@ class genTables:
 						coin = random.randint(0, len(temDic[key])-1);
 						val = temDic[key][coin];
 						if(val == "#"):
-							val = random.randint(0, 100);
+							val = random.randint(10, 99);
 					else:
 						val = "None";
 				elif(val == "#"):
@@ -142,7 +142,7 @@ class genTables:
 						coin = random.randint(0, len(temDic[key])-1);
 						val = temDic[key][coin];
 						if(val == "#"):
-							val = random.randint(0, 100);
+							val = random.randint(10, 99);
 					else:
 						val = "None";
 				if(pos in merge):
