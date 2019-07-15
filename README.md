@@ -1,6 +1,9 @@
 # OCR_Taxi_v0.0
 An alpha version of OCR for taxi receipt.
 
+# 7/15/2019
+1. 以Gen文件夹为主
+
 # 4/18/2019
 1. Gen文件夹上传了完成的根据模板识别；<br>
   1.1. 包括了生成器（基于tem.xlsx和tem.txt）和识别（识别本身调用了tesseract）；
